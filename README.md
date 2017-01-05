@@ -33,7 +33,7 @@ Place the `record_lookup.php` and the `pubmed_webbridge.js` and a copy of jquery
 
 3.  Log in to your Sierra WebMaster and look for the html file in the live screens named `resserv_panel.html`
 
-    Edit this file, and right after the <div> with the class 'citation' place the html snippet included in the pubmed_webbridge.html
+    Edit this file, and right after the div with the class 'citation' place the html snippet included in the pubmed_webbridge.html
     file in this repository.  
     
     You will need to edit it to point to the javascript files you stored in step 1.
