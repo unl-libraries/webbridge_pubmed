@@ -9,6 +9,15 @@
 
 var PHP_FILE_LOC=""
 
+/* define the URL of your library proxy url - This is for Sierra Webbridge, so 
+ * a proxy url is usually of the format http://0-somevendordomain.yourlibrarydomain/restof the vendor url
+
+ */
+var LIBRARY_PROXY_URL="yourlibrarydomain"
+	
+/* the pid is the your institutional id with crossref */
+var pid=""
+
 /* First step -  grab the parameters from the url and parse them */
 
 /**
@@ -107,7 +116,7 @@ function updatePubmed(){
 								}
 							});
 							if (doi){								
-								$("#pubmed_crossref")[0].innerHTML += "<p><a href='http://0-www.crossref.org.library.unl.edu/openurl?pid=unl:unl1115&id=doi:"+doi+"'>Get Full Text through Crossref</a></p>"; 
+								$("#pubmed_crossref")[0].innerHTML += "<p><a href='http://0-www.crossref.org."+LIBRARY_PROXY_URL+"/openurl?pid="+pid+"&id=doi:"+doi+"'>Get Full Text through Crossref</a></p>"; 
 							}
 							else{
 								//found article result, but no DOI
