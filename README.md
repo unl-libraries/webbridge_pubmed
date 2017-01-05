@@ -43,7 +43,7 @@ Place the `record_lookup.php` and the `pubmed_webbridge.js` and a copy of jquery
 4. Test it from a pubmed article search, and click the webbridge button.
 
 
-*Note: We are using a later version of 1 of jquery to allow for backward compatibility with earlier versions of Internet Explorer.  
+*Note: We are using a later version of jquery.1.*  to allow for backward compatibility with earlier versions of Internet Explorer.  
 Use the latest jquery if you don't have to worry about that.
 
 This works on the premise that the link coming from pubmed contains the sid value of `Entrez:PubMed`.  Anything else, and this process is not triggered.
