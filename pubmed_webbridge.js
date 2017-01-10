@@ -7,16 +7,22 @@
  *  example:  http://yoursevername/pubmed/
  */
 
-var PHP_FILE_LOC=""
+	var PHP_FILE_LOC="http://unllib.unl.edu/webbridge/pubmed/"
 
 /* define the URL of your library proxy url - This is for Sierra Webbridge, so 
  * a proxy url is usually of the format http://0-somevendordomain.yourlibrarydomain/restof the vendor url
 
  */
-var LIBRARY_PROXY_URL="yourlibrarydomain"
+	var LIBRARY_PROXY_URL="library.unl.edu"
 	
 /* the pid is the your institutional id with crossref */
-var pid=""
+	var pid="unl:unl1115"
+
+/*
+ * The OpenURL request url that we will send parameters to and create a Request item link
+ * 
+ */
+	var requestOpenURL = "https://unl.illiad.oclc.org/illiad/illiad.dll/OpenURL";
 
 /* First step -  grab the parameters from the url and parse them */
 
@@ -77,9 +83,44 @@ function getCitation(record_metadata){
 		citation_info +='pp.'+pages;
 	}
 	if (date){
-		citation_info +='&nbsp;Date:'+date;
+		citation_info +='&nbsp;Date: '+date;
 	}
 	return citation_info;
+}
+
+function getRequestLink(record_metadata){
+	if (record_metadata.pubtype[0] != "Journal Article"){
+		return requestOpenURL+"?sid=PubMed&genre=thesis&" +
+				"aulast=" +	encodeURIComponent(record_metadata.lastauthor) + 
+				"&aufirst=" + encodeURIComponent(record_metadata.authors[0].name) + 
+				"&title=" +	encodeURIComponent(record_metadata.booktitle) + 
+				"&date=#year2#" +
+				"&pub=#@school#" +
+				"&CallNumber=#@CallNumber#" +
+				"&callnum=#@CALLNUM#" +
+				"&Call-Number=#@CALL-NUMBER#" +
+				"&callnumber=#@CALLNUMBER090#";
+	}
+	else {
+		return requestOpenURL+"?sid=PubMed&genre=article" +
+				"&issn=" +encodeURIComponent(record_metadata.issn) +
+				"&aulast=" + encodeURIComponent(record_metadata.lastauthor) +
+				"&aufirst=" +encodeURIComponent(record_metadata.authors[0].name) +
+				"&atitle=" +encodeURIComponent(record_metadata.title) +
+				"&issue=" +encodeURIComponent(record_metadata.issue) + 
+				"&title=" + encodeURIComponent(record_metadata.fulljournalname) + 
+				"&spage=" +
+				"&epage=" +
+				"&volume=" +encodeURIComponent(record_metadata.volume) +
+				"&date=" +encodeURIComponent(record_metadata.pubdate) +
+				"&PhotoArticleTitle=" + encodeURIComponent(record_metadata.title) +
+				"&PhotoJournalVolume=" + encodeURIComponent(record_metadata.volume)+
+				"&PhotoJournalIssue=" + encodeURIComponent(record_metadata.issue) +
+				"&PhotoJournalYear=" +
+				"&PhotoJournalInclusivePages=" + encodeURIComponent(record_metadata.pages) +
+				"&PhotoJournalMonth=" +
+				"&LoanAuthor=";
+	}
 }
 
 
@@ -115,14 +156,21 @@ function updatePubmed(){
 									doi = item.value;
 								}
 							});
-							if (doi){								
-								$("#pubmed_crossref")[0].innerHTML += "<p><a href='http://0-www.crossref.org."+LIBRARY_PROXY_URL+"/openurl?pid="+pid+"&id=doi:"+doi+"'>Get Full Text through Crossref</a></p>"; 
+							if (typeof doi === "undefined") {
+								//found article result, but no DOI
+								var match = /^doi\:\s+(.+)/i.exec(record_metadata.elocationid); 
+								if (typeof match[1] != undefined){
+									doi = match[1];
+									$("#pubmed_crossref")[0].innerHTML += "<p><a href='http://0-www.crossref.org."+LIBRARY_PROXY_URL+"/openurl?pid="+pid+"&id=doi:"+doi+"'>Get Full Text through Crossref</a></p>";
+								}
+								else {
+									$("#pubmed_crossref")[0].innerHTML += "<p><span style='color:red;padding:2px;'>Could not find DOI for this record</span></p>";								 
+								}
 							}
 							else{
-								//found article result, but no DOI
-								$("#pubmed_crossref")[0].innerHTML += "<p><span style='color:red;padding:2px;'>Could not find DOI for this record</span></p>";
+								$("#pubmed_crossref")[0].innerHTML += "<p><a href='http://0-www.crossref.org."+LIBRARY_PROXY_URL+"/openurl?pid="+pid+"&id=doi:"+doi+"'>Get Full Text through Crossref</a></p>";
 							}
-							
+							$("#pubmed_crossref")[0].innerHTML += "<a href='"+getRequestLink(record_metadata)+"'>Request Delivery</a>";
 						}
 						else { $("#pubmed_crossref")[0].innerHTML +="<p><span style='color:red;padding:2px;'>DOI for article "+pmid+" could not be found</span></p>"; }
 			});
