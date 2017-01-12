@@ -7,22 +7,22 @@
  *  example:  http://yoursevername/pubmed/
  */
 
-	var PHP_FILE_LOC="http://unllib.unl.edu/webbridge/pubmed/"
+	var PHP_FILE_LOC=""
 
 /* define the URL of your library proxy url - This is for Sierra Webbridge, so 
  * a proxy url is usually of the format http://0-somevendordomain.yourlibrarydomain/restof the vendor url
 
  */
-	var LIBRARY_PROXY_URL="library.unl.edu"
+	var LIBRARY_PROXY_URL=""
 	
 /* the pid is the your institutional id with crossref */
-	var pid="unl:unl1115"
+	var pid=""
 
 /*
  * The OpenURL request url that we will send parameters to and create a Request item link
  * 
  */
-	var requestOpenURL = "https://unl.illiad.oclc.org/illiad/illiad.dll/OpenURL";
+	var requestOpenURL = "";
 
 /* First step -  grab the parameters from the url and parse them */
 
