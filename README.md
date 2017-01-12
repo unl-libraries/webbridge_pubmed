@@ -30,6 +30,38 @@ Place the `record_lookup.php` and the `pubmed_webbridge.js` and a copy of jquery
   These are used to create the link to crossref 
   
   `<a href='http://0-www.crossref.org."+LIBRARY_PROXY_URL+"/openurl?pid="+pid+"&id=doi:"+doi+"'>Get Full Text through Crossref</a>"`
+  
+  `var requestOpenURL =""`
+   set this to your OpenURL request link if you want a request delivery link generated.  You can see in the javascript code the formatting and how it comes together.  Leave this alone if you choose to not use it.
+   
+ ```javascript
+ function getRequestLink(record_metadata){
+	
+	if (requestOpenURL && record_metadata.pubtype[0] == "Journal Article"){
+		return requestOpenURL+"?sid=PubMed&genre=article" +
+				"&issn=" +encodeURIComponent(record_metadata.issn) +
+				"&aulast=" + encodeURIComponent(record_metadata.lastauthor) +
+				"&aufirst=" +encodeURIComponent(record_metadata.authors[0].name) +
+				"&atitle=" +encodeURIComponent(record_metadata.title) +
+				"&issue=" +encodeURIComponent(record_metadata.issue) + 
+				"&title=" + encodeURIComponent(record_metadata.fulljournalname) + 
+				"&spage=" +
+				"&epage=" +
+				"&volume=" +encodeURIComponent(record_metadata.volume) +
+				"&date=" +encodeURIComponent(record_metadata.pubdate) +
+				"&PhotoArticleTitle=" + encodeURIComponent(record_metadata.title) +
+				"&PhotoJournalVolume=" + encodeURIComponent(record_metadata.volume)+
+				"&PhotoJournalIssue=" + encodeURIComponent(record_metadata.issue) +
+				"&PhotoJournalYear=" +
+				"&PhotoJournalInclusivePages=" + encodeURIComponent(record_metadata.pages) +
+				"&PhotoJournalMonth=" +
+				"&LoanAuthor=";
+	}
+	else{
+		return false;
+	}
+}
+```  
 
 3.  Log in to your Sierra WebMaster and look for the html file in the live screens named `resserv_panel.html`
 
