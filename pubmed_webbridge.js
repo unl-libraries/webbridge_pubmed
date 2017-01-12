@@ -7,22 +7,22 @@
  *  example:  http://yoursevername/pubmed/
  */
 
-	var PHP_FILE_LOC="http://unllib.unl.edu/webbridge/pubmed/"
+	var PHP_FILE_LOC=""
 
 /* define the URL of your library proxy url - This is for Sierra Webbridge, so 
  * a proxy url is usually of the format http://0-somevendordomain.yourlibrarydomain/restof the vendor url
 
  */
-	var LIBRARY_PROXY_URL="library.unl.edu"
+	var LIBRARY_PROXY_URL=""
 	
 /* the pid is the your institutional id with crossref */
-	var pid="unl:unl1115"
+	var pid=""
 
 /*
  * The OpenURL request url that we will send parameters to and create a Request item link
  * 
  */
-	var requestOpenURL = "https://unl.illiad.oclc.org/illiad/illiad.dll/OpenURL";
+	var requestOpenURL = "";
 
 /* First step -  grab the parameters from the url and parse them */
 
@@ -89,19 +89,8 @@ function getCitation(record_metadata){
 }
 
 function getRequestLink(record_metadata){
-	if (record_metadata.pubtype[0] != "Journal Article"){
-		return requestOpenURL+"?sid=PubMed&genre=thesis&" +
-				"aulast=" +	encodeURIComponent(record_metadata.lastauthor) + 
-				"&aufirst=" + encodeURIComponent(record_metadata.authors[0].name) + 
-				"&title=" +	encodeURIComponent(record_metadata.booktitle) + 
-				"&date=#year2#" +
-				"&pub=#@school#" +
-				"&CallNumber=#@CallNumber#" +
-				"&callnum=#@CALLNUM#" +
-				"&Call-Number=#@CALL-NUMBER#" +
-				"&callnumber=#@CALLNUMBER090#";
-	}
-	else {
+	
+	if (requestOpenURL && record_metadata.pubtype[0] == "Journal Article"){
 		return requestOpenURL+"?sid=PubMed&genre=article" +
 				"&issn=" +encodeURIComponent(record_metadata.issn) +
 				"&aulast=" + encodeURIComponent(record_metadata.lastauthor) +
@@ -120,6 +109,9 @@ function getRequestLink(record_metadata){
 				"&PhotoJournalInclusivePages=" + encodeURIComponent(record_metadata.pages) +
 				"&PhotoJournalMonth=" +
 				"&LoanAuthor=";
+	}
+	else{
+		return false;
 	}
 }
 
@@ -156,21 +148,25 @@ function updatePubmed(){
 									doi = item.value;
 								}
 							});
+							$("#pubmed_crossref")[0].innerHTML += "<p>";
 							if (typeof doi === "undefined") {
 								//found article result, but no DOI
 								var match = /^doi\:\s+(.+)/i.exec(record_metadata.elocationid); 
 								if (typeof match[1] != undefined){
 									doi = match[1];
-									$("#pubmed_crossref")[0].innerHTML += "<p><a href='http://0-www.crossref.org."+LIBRARY_PROXY_URL+"/openurl?pid="+pid+"&id=doi:"+doi+"'>Get Full Text through Crossref</a></p>";
+									$("#pubmed_crossref")[0].innerHTML += "<a href='http://0-www.crossref.org."+LIBRARY_PROXY_URL+"/openurl?pid="+pid+"&id=doi:"+doi+"'>Get Full Text through Crossref</a>";
 								}
 								else {
-									$("#pubmed_crossref")[0].innerHTML += "<p><span style='color:red;padding:2px;'>Could not find DOI for this record</span></p>";								 
+									$("#pubmed_crossref")[0].innerHTML += "<span style='color:red;padding:2px;'>Could not find DOI for this record</span>";								 
 								}
 							}
 							else{
-								$("#pubmed_crossref")[0].innerHTML += "<p><a href='http://0-www.crossref.org."+LIBRARY_PROXY_URL+"/openurl?pid="+pid+"&id=doi:"+doi+"'>Get Full Text through Crossref</a></p>";
+								$("#pubmed_crossref")[0].innerHTML += "<a href='http://0-www.crossref.org."+LIBRARY_PROXY_URL+"/openurl?pid="+pid+"&id=doi:"+doi+"'>Get Full Text through Crossref</a>";
 							}
-							$("#pubmed_crossref")[0].innerHTML += "<a href='"+getRequestLink(record_metadata)+"'>Request Delivery</a>";
+							if (getRequestLink(record_metadata)){
+								$("#pubmed_crossref")[0].innerHTML += "&nbsp;<span style='color:red;'>(If the full text is not available via Crossref, click on <a href='"+getRequestLink(record_metadata)+"'>Request Delivery</a> to obtain the article.)</span>  ";
+							}
+							$("#pubmed_crossref")[0].innerHTML += "</p>";
 						}
 						else { $("#pubmed_crossref")[0].innerHTML +="<p><span style='color:red;padding:2px;'>DOI for article "+pmid+" could not be found</span></p>"; }
 			});
