@@ -1,4 +1,5 @@
-# Webbridge Pubmed workaround
+# Webbridge Pubmed workaround 
+- NOTE: no longer in use and archived
 
 A workaround for an issue with links from pubmed articles back to the Innovative Sierra webbridge resolver.  
 PHP and Javascript files make a call to a pubmed service that looks up the metadata on the article and returns
